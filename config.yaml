@@ -1,0 +1,40 @@
+sec:
+  user_agent: "YourName your@email.com"
+  rate_limit_delay: 0.11
+
+filing:
+  company: "Microsoft Corporation"
+  cik: "0000789019"
+  accession_number: "0000950170-25-100235"
+  fiscal_year: 2025
+  url: "https://www.sec.gov/Archives/edgar/data/0000789019/000095017025100235/msft-20250630.htm"
+
+generator:
+  model: "meta/llama-3.1-70b-instruct"
+  api_base: "https://integrate.api.nvidia.com/v1"
+  temperature: 0.3
+  max_tokens: 2048
+
+verifier:
+  model: "meta/llama-3.1-8b-instruct"
+  api_base: "https://integrate.api.nvidia.com/v1"
+  temperature: 0.0
+  max_tokens: 1024
+
+chunking:
+  min_chunk_size: 300
+  max_chunk_size: 6000
+
+generation:
+  questions_per_chunk: 3
+  target_total_questions: 120
+
+verification:
+  fuzzy_match_threshold: 0.80
+  math_tolerance: 0.005
+  max_retries: 2
+
+output:
+  json_file: "output/qa_pairs.json"
+  csv_file: "output/qa_pairs.csv"
+  log_file: "output/pipeline_log.json"

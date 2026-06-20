@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-06-19T17:31:52.494211",
+  "config": "config.yaml",
+  "statistics": {
+    "total_chunks": 251,
+    "total_generated": 120,
+    "total_verified": 111,
+    "total_rejected": 9,
+    "verification_pass_rate": 0.925,
+    "by_type": {
+      "fact_extraction": 51,
+      "comparison": 36,
+      "multi_step_reasoning": 21,
+      "numeric_calculation": 12
+    },
+    "by_difficulty": {
+      "easy": 31,
+      "medium": 51,
+      "hard": 38
+    },
+    "by_section": {
+      "Item 1": 44,
+      "Item 1A": 30,
+      "Item 1C": 4,
+      "Item 7": 50,
+      "Item 8": 123
+    },
+    "rejection_reasons": {}
+  },
+  "stage_times": {
+    "fetch": 0.01099395751953125,
+    "parse": 1.022463083267212,
+    "chunk": 0.019029855728149414,
+    "generate": 3804.683480978012,
+    "verify": 225.51654982566833
+  },
+  "total_duration": 4031.355393886566
+}
