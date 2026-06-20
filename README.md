@@ -4,10 +4,10 @@ Automated pipeline that generates verified question-answer pairs from SEC 10-K f
 
 Built for Caliper Lab's assessment.
 ---
-
 ## Index
 
 - [Results](#results)
+- [Project Structure](#project-structure)
 - [How to Run](#how-to-run)
 - [Pipeline Overview](#pipeline-overview)
 - [Target Filing](#target-filing)
@@ -16,10 +16,8 @@ Built for Caliper Lab's assessment.
 - [Design Choices](#design-choices)
 - [Known Limitations](#known-limitations)
 - [Scaling to 1000+ Pairs](#scaling-to-multiple-documents-or-1000-pairs)
-- [Project Structure](#project-structure)
 - [Running Tests](#running-tests)
 - [Tech Stack](#tech-stack)
-
 ---
 
 ## Results
@@ -34,6 +32,30 @@ Built for Caliper Lab's assessment.
 | Total Runtime | ~67 minutes |
 
 ---
+## Project Structure
+
+```
+10k-qa-pipeline/
+├── main.py              # Entry point — run this
+├── config.yaml          # All configuration parameters
+├── requirements.txt
+├── .env                 # Add your NVIDIA_API_KEY here
+├── src/
+│   ├── schemas.py       # Pydantic data models
+│   ├── fetcher.py       # SEC EDGAR downloader
+│   ├── parser.py        # HTML parser + table extractor
+│   ├── chunker.py       # Hierarchical document chunker
+│   ├── generator.py     # Q&A generation (Llama-3.1-70B)
+│   ├── verifier.py      # Three-layer verification (Llama-3.1-8B)
+│   └── pipeline.py      # Orchestrator connecting all stages
+├── output/
+│   ├── qa_pairs.json    # Full dataset — 111 verified pairs
+│   ├── qa_pairs.csv     # CSV version
+│   └── pipeline_log.json
+├── data/raw/            # Downloaded 10-K cached here
+└── tests/
+    └── test_schemas.py
+```
 
 ## How to Run
 
@@ -299,28 +321,6 @@ Replace synchronous requests with async batch API calls. Most providers process 
 Replace JSON file storage with PostgreSQL for structured querying and pgvector for semantic deduplication across documents. This also enables cross-document question generation by retrieving semantically similar chunks from different filings.
 
 ---
-
-## Project Structure
-
-```
-10k-qa-pipeline/
-├── src/
-│   ├── schemas.py        Pydantic data models
-│   ├── fetcher.py        SEC EDGAR downloader
-│   ├── parser.py         HTML parser + table extractor
-│   ├── chunker.py        Hierarchical document chunker
-│   ├── generator.py      Q&A generation (Llama-3.1-70B)
-│   ├── verifier.py       Three-layer verification (Llama-3.1-8B)
-│   └── pipeline.py       Main orchestrator
-├── data/raw/             Downloaded 10-K HTML files
-├── output/               Generated JSON + CSV dataset
-├── tests/                Unit tests (pytest)
-├── config.yaml           All configuration parameters
-├── requirements.txt      Python dependencies
-├── main.py               CLI entry point
-└── README.md
-```
-
 ---
 
 ## Running Tests
