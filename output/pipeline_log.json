@@ -1,22 +1,22 @@
 {
-  "timestamp": "2026-06-19T17:31:52.494211",
+  "timestamp": "2026-06-20T09:19:33.707683",
   "config": "config.yaml",
   "statistics": {
     "total_chunks": 251,
     "total_generated": 120,
-    "total_verified": 111,
-    "total_rejected": 9,
-    "verification_pass_rate": 0.925,
+    "total_verified": 110,
+    "total_rejected": 10,
+    "verification_pass_rate": 0.9166666666666666,
     "by_type": {
-      "fact_extraction": 51,
-      "comparison": 36,
-      "multi_step_reasoning": 21,
-      "numeric_calculation": 12
+      "fact_extraction": 54,
+      "comparison": 25,
+      "multi_step_reasoning": 30,
+      "numeric_calculation": 11
     },
     "by_difficulty": {
-      "easy": 31,
-      "medium": 51,
-      "hard": 38
+      "easy": 19,
+      "medium": 57,
+      "hard": 44
     },
     "by_section": {
       "Item 1": 44,
@@ -28,11 +28,11 @@
     "rejection_reasons": {}
   },
   "stage_times": {
-    "fetch": 0.01099395751953125,
-    "parse": 1.022463083267212,
-    "chunk": 0.019029855728149414,
-    "generate": 3804.683480978012,
-    "verify": 225.51654982566833
+    "fetch": 0.3353745937347412,
+    "parse": 1.1488151550292969,
+    "chunk": 0.022998332977294922,
+    "generate": 5701.3819761276245,
+    "verify": 169.26713490486145
   },
-  "total_duration": 4031.355393886566
+  "total_duration": 5872.243928909302
 }
