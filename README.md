@@ -33,9 +33,9 @@ Built for Caliper Lab's assessment.
 | Q&A Pairs Verified | **110** |
 | Verification Pass Rate | **91.7%** |
 | Total Runtime | ~67 minutes |
-DATASET Filing | [View on SEC EDGAR](https://www.sec.gov/Archives/edgar/data/0000789019/000095017025100235/msft-20250630.htm) 
+Source Filing  | [View on SEC EDGAR](https://www.sec.gov/Archives/edgar/data/0000789019/000095017025100235/msft-20250630.htm) 
 
-**Dataset:** [qa_pairs.json](output/qa_pairs.json) · [qa_pairs.csv](output/qa_pairs.csv)
+**Output Dataset:** [qa_pairs.json](output/qa_pairs.json) · [qa_pairs.csv](output/qa_pairs.csv)
 
 ---
 
