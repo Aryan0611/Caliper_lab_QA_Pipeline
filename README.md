@@ -3,21 +3,24 @@
 Automated pipeline that generates verified question-answer pairs from SEC 10-K filings for AI model benchmarking.
 
 Built for Caliper Lab's assessment.
+
 ---
+
 ## Index
 
 - [Results](#results)
 - [Project Structure](#project-structure)
 - [How to Run](#how-to-run)
 - [Pipeline Overview](#pipeline-overview)
-- [Target Filing](#target-filing)
 - [Q&A Distribution](#qa-distribution)
+- [Question Quality Analysis](#question-quality-analysis)
 - [Output Format](#output-format)
 - [Design Choices](#design-choices)
 - [Known Limitations](#known-limitations)
 - [Scaling to 1000+ Pairs](#scaling-to-multiple-documents-or-1000-pairs)
 - [Running Tests](#running-tests)
 - [Tech Stack](#tech-stack)
+
 ---
 
 ## Results
@@ -27,11 +30,12 @@ Built for Caliper Lab's assessment.
 | Source Document | Microsoft FY2025 10-K |
 | Chunks Processed | 251 |
 | Q&A Pairs Generated | 120 |
-| Q&A Pairs Verified | **111** |
-| Verification Pass Rate | **92.5%** |
+| Q&A Pairs Verified | **110** |
+| Verification Pass Rate | **91.7%** |
 | Total Runtime | ~67 minutes |
 
 ---
+
 ## Project Structure
 
 ```
@@ -49,13 +53,15 @@ Built for Caliper Lab's assessment.
 │   ├── verifier.py      # Three-layer verification (Llama-3.1-8B)
 │   └── pipeline.py      # Orchestrator connecting all stages
 ├── output/
-│   ├── qa_pairs.json    # Full dataset — 111 verified pairs
+│   ├── qa_pairs.json    # Full dataset — 110 verified pairs
 │   ├── qa_pairs.csv     # CSV version
 │   └── pipeline_log.json
 ├── data/raw/            # Downloaded 10-K cached here
 └── tests/
     └── test_schemas.py
 ```
+
+---
 
 ## How to Run
 
@@ -67,8 +73,8 @@ Built for Caliper Lab's assessment.
 ### Setup
 
 ```bash
-git clone https://github.com/yourusername/10k-qa-pipeline.git
-cd 10k-qa-pipeline
+git clone https://github.com/Aryan0611/Caliper_lab_QA_Pipeline.git
+cd Caliper_lab_QA_Pipeline
 
 python -m venv venv
 venv\Scripts\activate        # Windows
@@ -134,7 +140,7 @@ Generate Q&A (generator.py)  ←  Llama-3.1-70B
     │  One question per chunk, deduplication enforced
     ▼
 Verify (verifier.py)  ←  Llama-3.1-8B
-    │  Layer 1 — Programmatic: fuzzy match source passage against chunk (≥0.80)
+    │  Layer 1 — Programmatic: fuzzy match source passage against chunk (≥0.75)
     │             number consistency check across answer and source
     │  Layer 2 — Math sandbox: for numeric questions, extract numbers,
     │             run calculation in Python, compare against LLM answer (±0.5%)
@@ -146,46 +152,47 @@ Output JSON + CSV
 
 ---
 
-## Target Filing
-
-| Field | Value |
-|-------|-------|
-| Company | Microsoft Corporation |
-| CIK | 0000789019 |
-| Filing Type | Form 10-K |
-| Fiscal Year End | June 30, 2025 |
-| Accession No. | 0000950170-25-100235 |
-
----
-
 ## Q&A Distribution
 
 **By question type:**
 
-| Type | Count | % |
-|------|-------|---|
-| fact_extraction | 51 | 46% |
-| comparison | 36 | 32% |
-| multi_step_reasoning | 21 | 19% |
-| numeric_calculation | 12 | 11% |
+| Type | Count | % | Primary Source Section |
+|------|-------|---|------------------------|
+| fact_extraction | 54 | 49% | Item 1 — Business |
+| multi_step_reasoning | 30 | 27% | Item 1A — Risk Factors |
+| comparison | 25 | 23% | Item 7 — MD&A |
+| numeric_calculation | 11 | 10% | Item 8 — Financial Statements |
 
 **By difficulty:**
 
 | Difficulty | Count | % |
 |------------|-------|---|
-| medium | 51 | 46% |
-| hard | 38 | 34% |
-| easy | 31 | 28% |
+| medium | 57 | 52% |
+| hard | 44 | 40% |
+| easy | 19 | 17% |
 
 **By source section:**
 
-| Section | Description | Chunks |
-|---------|-------------|--------|
-| Item 1 | Business | 44 |
-| Item 1A | Risk Factors | 30 |
-| Item 1C | Cybersecurity | 4 |
-| Item 7 | MD&A | 50 |
-| Item 8 | Financial Statements | 123 |
+| Section | Description | Chunks | Q&A Generated |
+|---------|-------------|--------|---------------|
+| Item 1 | Business | 44 | ~30 |
+| Item 1A | Risk Factors | 30 | ~30 |
+| Item 1C | Cybersecurity | 4 | ~4 |
+| Item 7 | MD&A | 50 | ~30 |
+| Item 8 | Financial Statements | 123 | ~16 |
+
+---
+
+## Question Quality Analysis
+
+The dataset deliberately skews toward **medium and hard** questions (92% of pairs) because simple fact lookups add limited value for benchmarking frontier AI models. Recall questions don't differentiate strong models from weak ones — reasoning and calculation questions do.
+
+| Question Type | What It Tests | Difficulty Range | Example |
+|---------------|---------------|-----------------|---------|
+| fact_extraction | Direct recall of stated facts, entities, segment names | Easy → Medium | "What are Microsoft's three operating segments?" |
+| numeric_calculation | Working with financial figures — growth rates, differences, ratios | Medium → Hard | "What was Microsoft's YoY revenue growth rate in FY2025?" |
+| comparison | Comparing two segments, years, or metrics against each other | Medium → Hard | "How did Intelligent Cloud revenue compare to More Personal Computing in FY2025?" |
+| multi_step_reasoning | Connecting cause → effect across multiple facts in a passage | Hard | "How could Microsoft's AI infrastructure investment impact margins if demand doesn't grow proportionally?" |
 
 ---
 
@@ -205,7 +212,7 @@ Each row in the dataset contains:
 | `source_subsection` | Subsection within the Item |
 | `verification_status` | pass / revise |
 | `source_match_score` | Fuzzy match score 0–1 |
-| `math_checked` | Whether Python math sandbox ran |
+| `math_checked` | Whether Python math sandbox ran (true only for numeric questions) |
 | `math_passed` | Whether math check passed (null if non-numeric) |
 
 ### Sample Q&A Pairs
@@ -266,6 +273,10 @@ Programmatic checks (fuzzy match, number consistency) run first and reject failu
 
 Each chunk is tagged as `text_paragraph`, `financial_table`, or `mixed` during chunking. This tag routes the chunk to the appropriate prompt template — table chunks get numeric/calculation prompts; narrative chunks get reasoning/comparison prompts. Without this, you get weak math questions from prose and poor reasoning questions from tables.
 
+### Prompts embedded in code, not separate files
+
+Prompt templates live directly in `generator.py` and `verifier.py` rather than external `.txt` files. This avoids file path issues when the repo is cloned and keeps the generation logic self-contained.
+
 ### No vector database or embeddings
 
 For single-document generation, vector search adds complexity without benefit. The pipeline iterates every chunk sequentially — there is no retrieval step. ChromaDB and embeddings are noted in the scaling section for multi-document scenarios where cross-document search becomes necessary.
@@ -288,13 +299,13 @@ Some deeply nested HTML tables in the filing lose column alignment during HTML�
 Questions are generated from individual chunks. The pipeline cannot produce questions that require connecting information from two distant sections — for example, linking a risk described in Item 1A to a specific financial figure in Item 8.
 
 **4. Rate limits slow the pipeline**
-NVIDIA NIM free tier allows approximately 30 requests per minute. The full pipeline takes ~67 minutes for 120 pairs. Retry logic with exponential backoff is implemented, but large runs will still be slow.
+NVIDIA NIM free tier allows approximately 30 requests per minute. The full pipeline takes ~98 minutes for 120 pairs. Retry logic with exponential backoff is implemented, but large runs will still be slow.
 
 **5. Section detection is regex-based**
 The parser detects `Item 1`, `Item 1A`, etc. using pattern matching. Different companies format these headings differently. The regex works reliably for Microsoft's filing but may miss boundaries in other filings without adjustment.
 
-**6. Numeric question coverage is lower than target**
-Only 12 numeric calculation questions were generated (target was ~25). Many text-heavy chunks lack structured numeric data. Financial statement chunks contain numbers but the Markdown table format sometimes confuses the generator prompt.
+**6. Numeric question coverage lower than target**
+Only 11 numeric calculation questions were generated against a target of ~25. The root cause is that many Item 8 chunks are Markdown tables where the `contains_numbers` flag doesn't trigger correctly in text form — the generator falls back to fact extraction. Fix: relax the numeric routing condition to allow table chunks regardless of the flag.
 
 ---
 
@@ -320,7 +331,6 @@ Replace synchronous requests with async batch API calls. Most providers process 
 
 Replace JSON file storage with PostgreSQL for structured querying and pgvector for semantic deduplication across documents. This also enables cross-document question generation by retrieving semantically similar chunks from different filings.
 
----
 ---
 
 ## Running Tests
