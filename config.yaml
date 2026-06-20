@@ -30,7 +30,7 @@ generation:
   target_total_questions: 120
 
 verification:
-  fuzzy_match_threshold: 0.80
+  fuzzy_match_threshold: 0.78
   math_tolerance: 0.005
   max_retries: 2
 

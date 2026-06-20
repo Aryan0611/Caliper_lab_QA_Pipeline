@@ -141,30 +141,30 @@ Return ONLY a JSON array, no other text:
 class QAGenerator:
     # Question type routing by SEC section
     SECTION_ROUTING = {
-        "item 1": [
-            (QuestionType.FACT_EXTRACTION, DifficultyLevel.EASY),
-            (QuestionType.FACT_EXTRACTION, DifficultyLevel.MEDIUM),
-            (QuestionType.COMPARISON, DifficultyLevel.MEDIUM),
+    "item 1": [
+        (QuestionType.FACT_EXTRACTION,      DifficultyLevel.EASY),
+        (QuestionType.COMPARISON,           DifficultyLevel.MEDIUM),
+        (QuestionType.FACT_EXTRACTION,      DifficultyLevel.MEDIUM),
         ],
-        "item 1a": [
-            (QuestionType.FACT_EXTRACTION, DifficultyLevel.EASY),
-            (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
-            (QuestionType.COMPARISON, DifficultyLevel.MEDIUM),
-        ],
-        "item 1c": [
-            (QuestionType.FACT_EXTRACTION, DifficultyLevel.MEDIUM),
-            (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
-        ],
-        "item 7": [
-            (QuestionType.NUMERIC_CALCULATION, DifficultyLevel.MEDIUM),
-            (QuestionType.COMPARISON, DifficultyLevel.HARD),
-            (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
-        ],
-        "item 8": [
-            (QuestionType.NUMERIC_CALCULATION, DifficultyLevel.EASY),
-            (QuestionType.NUMERIC_CALCULATION, DifficultyLevel.MEDIUM),
-            (QuestionType.FACT_EXTRACTION, DifficultyLevel.EASY),
-        ],
+    "item 1a": [
+        (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
+        (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
+        (QuestionType.COMPARISON,           DifficultyLevel.MEDIUM),
+    ],
+    "item 1c": [
+        (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
+        (QuestionType.FACT_EXTRACTION,      DifficultyLevel.MEDIUM),
+    ],
+    "item 7": [
+        (QuestionType.NUMERIC_CALCULATION,  DifficultyLevel.HARD),
+        (QuestionType.MULTI_STEP_REASONING, DifficultyLevel.HARD),
+        (QuestionType.NUMERIC_CALCULATION,  DifficultyLevel.MEDIUM),
+    ],
+    "item 8": [
+        (QuestionType.NUMERIC_CALCULATION,  DifficultyLevel.MEDIUM),
+        (QuestionType.NUMERIC_CALCULATION,  DifficultyLevel.HARD),
+        (QuestionType.NUMERIC_CALCULATION,  DifficultyLevel.MEDIUM),
+    ],
     }
 
     def __init__(self, config: dict):
@@ -227,7 +227,7 @@ class QAGenerator:
             route_index = i % len(routes)
             q_type, difficulty = routes[route_index]
 
-            if q_type == QuestionType.NUMERIC_CALCULATION and not chunk.contains_numbers:
+            if q_type == QuestionType.NUMERIC_CALCULATION and not chunk.contains_numbers and chunk.content_type == "text_paragraph":
                 q_type = QuestionType.FACT_EXTRACTION
 
             print(
