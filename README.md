@@ -312,9 +312,6 @@ Replace JSON file storage with PostgreSQL for structured querying and pgvector f
 │   ├── generator.py      Q&A generation (Llama-3.1-70B)
 │   ├── verifier.py       Three-layer verification (Llama-3.1-8B)
 │   └── pipeline.py       Main orchestrator
-├── prompts/
-│   ├── generation/       Prompt templates per question type
-│   └── verification/     Adversarial verifier prompt
 ├── data/raw/             Downloaded 10-K HTML files
 ├── output/               Generated JSON + CSV dataset
 ├── tests/                Unit tests (pytest)
