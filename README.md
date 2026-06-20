@@ -3,6 +3,22 @@
 Automated pipeline that generates verified question-answer pairs from SEC 10-K filings for AI model benchmarking.
 
 Built for Caliper Lab's assessment.
+---
+
+## Index
+
+- [Results](#results)
+- [How to Run](#how-to-run)
+- [Pipeline Overview](#pipeline-overview)
+- [Target Filing](#target-filing)
+- [Q&A Distribution](#qa-distribution)
+- [Output Format](#output-format)
+- [Design Choices](#design-choices)
+- [Known Limitations](#known-limitations)
+- [Scaling to 1000+ Pairs](#scaling-to-multiple-documents-or-1000-pairs)
+- [Project Structure](#project-structure)
+- [Running Tests](#running-tests)
+- [Tech Stack](#tech-stack)
 
 ---
 
